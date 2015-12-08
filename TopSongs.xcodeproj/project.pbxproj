@@ -1,0 +1,381 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		302917300F5E1F64006885A5 /* TopSongs.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 3029172F0F5E1F64006885A5 /* TopSongs.xcdatamodel */; };
+		302917390F5E2FD7006885A5 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 302917380F5E2FD7006885A5 /* CoreData.framework */; };
+		3097D6EF0E3939E700159D5D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3097D6EE0E3939E700159D5D /* CoreGraphics.framework */; };
+		538069E717DA321A00008878 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 538069E517DA321A00008878 /* Storyboard.storyboard */; };
+		539E3D7C1BB34E280034E0D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 539E3D7A1BB34E280034E0D6 /* LaunchScreen.storyboard */; };
+		539E74ED1BB30DF1007B6E93 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 539E74EC1BB30DF1007B6E93 /* libxml2.tbd */; };
+		539E74F11BB30EB6007B6E93 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 539E74F01BB30EB6007B6E93 /* Images.xcassets */; };
+		539E74F51BB30FBC007B6E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 539E74F31BB30FBC007B6E93 /* Localizable.strings */; };
+		D75F7A661C12B38900BECE98 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75F7A651C12B38900BECE98 /* Category.swift */; };
+		D75F7A681C12B40800BECE98 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75F7A671C12B40800BECE98 /* Song.swift */; };
+		D75F7A721C12B57400BECE98 /* SongDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75F7A711C12B57400BECE98 /* SongDetailsController.swift */; };
+		D7B3E0DD1C134FF800435A86 /* SongsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E0DC1C134FF800435A86 /* SongsViewController.swift */; };
+		D7B3E0DF1C13522C00435A86 /* CategoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E0DE1C13522C00435A86 /* CategoryCache.swift */; };
+		D7B3E1251C147C4F00435A86 /* iTunesRSSImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E1241C147C4F00435A86 /* iTunesRSSImporter.swift */; };
+		D7B3E1281C14C48000435A86 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E1271C14C48000435A86 /* AppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1D6058910D05DD3D006BFB54 /* TopSongs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopSongs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		3029172F0F5E1F64006885A5 /* TopSongs.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = TopSongs.xcdatamodel; sourceTree = "<group>"; };
+		302917380F5E2FD7006885A5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		3097D6EE0E3939E700159D5D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		539E3D7B1BB34E280034E0D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		539E74EA1BB30AE5007B6E93 /* ReadMe.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
+		539E74EC1BB30DF1007B6E93 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		539E74F01BB30EB6007B6E93 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		539E74F21BB30F59007B6E93 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Storyboard.storyboard; sourceTree = "<group>"; };
+		539E74F41BB30FBC007B6E93 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D75F7A651C12B38900BECE98 /* Category.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		D75F7A671C12B40800BECE98 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		D75F7A711C12B57400BECE98 /* SongDetailsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailsController.swift; sourceTree = "<group>"; };
+		D7B3E0DC1C134FF800435A86 /* SongsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsViewController.swift; sourceTree = "<group>"; };
+		D7B3E0DE1C13522C00435A86 /* CategoryCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CategoryCache.swift; path = Application/CategoryCache.swift; sourceTree = "<group>"; };
+		D7B3E1241C147C4F00435A86 /* iTunesRSSImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = iTunesRSSImporter.swift; path = Application/iTunesRSSImporter.swift; sourceTree = "<group>"; };
+		D7B3E1261C147CB900435A86 /* TopSongs-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TopSongs-Bridging-Header.h"; sourceTree = "<group>"; };
+		D7B3E1271C14C48000435A86 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D7B3E1471C16EEA800435A86 /* README2.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README2.md; sourceTree = "<group>"; };
+		D7B3E1491C16EEBA00435A86 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				539E74ED1BB30DF1007B6E93 /* libxml2.tbd in Frameworks */,
+				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
+				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				3097D6EF0E3939E700159D5D /* CoreGraphics.framework in Frameworks */,
+				302917390F5E2FD7006885A5 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D7B3E0DC1C134FF800435A86 /* SongsViewController.swift */,
+				D75F7A711C12B57400BECE98 /* SongDetailsController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* TopSongs.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* TopSongs */ = {
+			isa = PBXGroup;
+			children = (
+				D7B3E1491C16EEBA00435A86 /* LICENSE.txt */,
+				539E74EA1BB30AE5007B6E93 /* ReadMe.md */,
+				D7B3E1471C16EEA800435A86 /* README2.md */,
+				302919DD0F60702C006885A5 /* Application */,
+				080E96DDFE201D6D7F000001 /* Controllers */,
+				302917510F5F084C006885A5 /* Model */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = TopSongs;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				539E74F01BB30EB6007B6E93 /* Images.xcassets */,
+				8D1107310486CEB800E47090 /* Info.plist */,
+				538069E517DA321A00008878 /* Storyboard.storyboard */,
+				539E74F31BB30FBC007B6E93 /* Localizable.strings */,
+				539E3D7A1BB34E280034E0D6 /* LaunchScreen.storyboard */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				539E74EC1BB30DF1007B6E93 /* libxml2.tbd */,
+				302917380F5E2FD7006885A5 /* CoreData.framework */,
+				3097D6EE0E3939E700159D5D /* CoreGraphics.framework */,
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		302917510F5F084C006885A5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3029172F0F5E1F64006885A5 /* TopSongs.xcdatamodel */,
+				D75F7A671C12B40800BECE98 /* Song.swift */,
+				D75F7A651C12B38900BECE98 /* Category.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		302919DD0F60702C006885A5 /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				D7B3E1271C14C48000435A86 /* AppDelegate.swift */,
+				D7B3E1241C147C4F00435A86 /* iTunesRSSImporter.swift */,
+				D7B3E0DE1C13522C00435A86 /* CategoryCache.swift */,
+				D7B3E1261C147CB900435A86 /* TopSongs-Bridging-Header.h */,
+			);
+			name = Application;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* TopSongs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "TopSongs" */;
+			buildPhases = (
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TopSongs;
+			productName = TopSongs;
+			productReference = 1D6058910D05DD3D006BFB54 /* TopSongs.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TopSongs" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				en,
+				Base,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* TopSongs */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* TopSongs */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				539E74F11BB30EB6007B6E93 /* Images.xcassets in Resources */,
+				539E3D7C1BB34E280034E0D6 /* LaunchScreen.storyboard in Resources */,
+				539E74F51BB30FBC007B6E93 /* Localizable.strings in Resources */,
+				538069E717DA321A00008878 /* Storyboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7B3E1251C147C4F00435A86 /* iTunesRSSImporter.swift in Sources */,
+				D75F7A661C12B38900BECE98 /* Category.swift in Sources */,
+				D7B3E0DF1C13522C00435A86 /* CategoryCache.swift in Sources */,
+				D75F7A721C12B57400BECE98 /* SongDetailsController.swift in Sources */,
+				D75F7A681C12B40800BECE98 /* Song.swift in Sources */,
+				302917300F5E1F64006885A5 /* TopSongs.xcdatamodel in Sources */,
+				D7B3E1281C14C48000435A86 /* AppDelegate.swift in Sources */,
+				D7B3E0DD1C134FF800435A86 /* SongsViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		538069E517DA321A00008878 /* Storyboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				539E74F21BB30F59007B6E93 /* Base */,
+			);
+			name = Storyboard.storyboard;
+			sourceTree = "<group>";
+		};
+		539E3D7A1BB34E280034E0D6 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				539E3D7B1BB34E280034E0D6 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		539E74F31BB30FBC007B6E93 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				539E74F41BB30FBC007B6E93 /* Base */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Prefix.pch;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$SDKROOT,",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = TopSongs;
+				SWIFT_OBJC_BRIDGING_HEADER = "TopSongs-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1D6058950D05DD3E006BFB54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Prefix.pch;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$SDKROOT,",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = TopSongs;
+				SWIFT_OBJC_BRIDGING_HEADER = "TopSongs-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "TopSongs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* Debug */,
+				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TopSongs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
