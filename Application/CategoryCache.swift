@@ -80,7 +80,7 @@ class CategoryCache: NSObject {
                 NSNotificationCenter.defaultCenter().removeObserver(self, name: NSManagedObjectContextDidSaveNotification, object: _managedObjectContext!)
             }
             _managedObjectContext = aContext
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "managedObjectContextDidSave:", name: NSManagedObjectContextDidSaveNotification, object: _managedObjectContext)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CategoryCache.managedObjectContextDidSave(_:)), name: NSManagedObjectContextDidSaveNotification, object: _managedObjectContext)
         }
     }
     
@@ -137,10 +137,11 @@ class CategoryCache: NSObject {
             // check cache
             if var cacheNode = cache[name] {
                 // cache hit, update access counter
-                cacheNode.accessCounter = accessCounter++
+                cacheNode.accessCounter = accessCounter
+                accessCounter += 1
                 let category = managedObjectContext?.objectWithID(cacheNode.objectID) as! Category?
                 totalCacheHitCost += (NSDate.timeIntervalSinceReferenceDate() - before)
-                cacheHitCount++
+                cacheHitCount += 1
                 return category
             }
         }
@@ -174,11 +175,12 @@ class CategoryCache: NSObject {
                 // remove from the cache
                 cache.removeValueForKey(keyOfOldestCacheNode)
             }
-            let cacheNode = (category.objectID, accessCounter++)
+            let cacheNode = (category.objectID, accessCounter)
+            accessCounter += 1
             cache[name] = cacheNode
         }
         totalCacheMissCost += (NSDate.timeIntervalSinceReferenceDate() - before)
-        cacheMissCount++
+        cacheMissCount += 1
         return category
     }
     

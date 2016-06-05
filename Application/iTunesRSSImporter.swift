@@ -90,9 +90,9 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     
     override func main() {
         
-        if self.delegate?.respondsToSelector("importerDidSave:") ?? false {
+        if self.delegate?.respondsToSelector(#selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
             NSNotificationCenter.defaultCenter().addObserver(self.delegate!,
-                selector: "importerDidSave:",
+                selector: #selector(iTunesRSSImporterDelegate.importerDidSave(_:)),
                 name: NSManagedObjectContextDidSaveNotification,
                 object: self.insertionContext)
         }
@@ -139,7 +139,7 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
             } catch let saveError as NSError {
                 fatalError("Unhandled error saving managed object context in import thread: \(saveError.localizedDescription)")
             }
-            if self.delegate?.respondsToSelector("importerDidSave:") ?? false {
+            if self.delegate?.respondsToSelector(#selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
                 NSNotificationCenter.defaultCenter().removeObserver(self.delegate!,
                     name: NSManagedObjectContextDidSaveNotification,
                     object: self.insertionContext)
@@ -187,7 +187,8 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
             
             if _currentSong == nil {
                 _currentSong = Song(entity: self.songEntityDescription, insertIntoManagedObjectContext: self.insertionContext)
-                _currentSong!.rank = ++rankOfCurrentSong
+                rankOfCurrentSong += 1
+                _currentSong!.rank = rankOfCurrentSong
             }
             return _currentSong
         }
@@ -244,7 +245,7 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
         
         self.parsingASong = false
         self.currentSong = nil
-        self.countForCurrentBatch++
+        self.countForCurrentBatch += 1
         
         if self.countForCurrentBatch == kImportBatchSize {
             

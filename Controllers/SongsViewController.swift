@@ -45,7 +45,7 @@ class SongsViewController: UITableViewController {
         do {
             try self.fetchedResultsController?.performFetch()
         } catch let error as NSError {
-            NSLog("Unhandled error performing fetch at SongsViewController.m, line %d: %@", Int32(__LINE__), error.localizedDescription)
+            NSLog("Unhandled error performing fetch at SongsViewController.m, line %d: %@", Int32(#line), error.localizedDescription)
         }
         self.tableView.reloadData()
     }

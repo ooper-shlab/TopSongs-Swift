@@ -61,7 +61,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, iTunesRSSImporterDelegate {
                 do {
                     try NSFileManager.defaultManager().removeItemAtURL(self.persistentStoreURL)
                 } catch let error as NSError {
-                    fatalError("Unhandled error adding persistent store in \(__FILE__) at line \(__LINE__): \(error.localizedDescription)")
+                    fatalError("Unhandled error adding persistent store in \(#file) at line \(#line): \(error.localizedDescription)")
                 }
             }
             
@@ -116,7 +116,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, iTunesRSSImporterDelegate {
                 do {
                     try _persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: nil)
                 } catch let error as NSError {
-                    fatalError("Unhandled error adding persistent store in \(__FILE__) at line \(__LINE__): \(error.localizedDescription)")
+                    fatalError("Unhandled error adding persistent store in \(#file) at line \(#line): \(error.localizedDescription)")
                 }
             }
             return _persistentStoreCoordinator

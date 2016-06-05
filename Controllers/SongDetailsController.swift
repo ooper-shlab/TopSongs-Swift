@@ -35,7 +35,7 @@ class SongDetailsController: UITableViewController {
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().addObserver(self,
-            selector: "localeChanged:",
+            selector: #selector(SongDetailsController.localeChanged(_:)),
             name: NSCurrentLocaleDidChangeNotification,
             object: nil)
     }
