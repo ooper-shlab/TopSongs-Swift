@@ -23,11 +23,11 @@ import CoreData
 protocol iTunesRSSImporterDelegate: NSObjectProtocol {
     
     // Notification posted by NSManagedObjectContext when saved.
-    optional func importerDidSave(saveNotification: NSNotification)
+    @objc optional func importerDidSave(_ saveNotification: Notification)
     // Called by the importer when parsing is finished.
-    optional func importerDidFinishParsingData(importer: iTunesRSSImporter)
+    @objc optional func importerDidFinishParsingData(_ importer: iTunesRSSImporter)
     // Called by the importer in the case of an error.
-    optional func importer(importer: iTunesRSSImporter, didFailWithError error: NSError)
+    @objc optional func importer(_ importer: iTunesRSSImporter, didFailWithError error: Error)
     
 }
 
@@ -37,11 +37,11 @@ protocol iTunesRSSImporterDelegate: NSObjectProtocol {
 // complexity, as any code which interacts with the UI must then do so in a thread-safe manner.
 //
 @objc(iTunesRSSImporter)
-class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
+class iTunesRSSImporter: Operation, URLSessionDataDelegate {
     
     private var _theCache: CategoryCache?
     
-    var iTunesURL: NSURL?
+    var iTunesURL: URL?
     weak var delegate: iTunesRSSImporterDelegate?
     var persistentStoreCoordinator: NSPersistentStoreCoordinator?
     
@@ -54,20 +54,20 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     // Class extension for private properties and methods.
     
     // Reference to the libxml parser context
-    private var context: xmlParserCtxtPtr = nil
+    private var context: xmlParserCtxtPtr? = nil
     
     // The following state variables deal with getting character data from XML elements. This is a potentially expensive
     // operation. The character data in a given element may be delivered over the course of multiple callbacks, so that
     // data must be appended to a buffer. The optimal way of doing this is to use a C string buffer that grows exponentially.
     // When all the characters have been delivered, an NSString is constructed and the buffer is reset.
-    private var storingCharacters: Bool = false
-    private var characterBuffer: NSMutableData?
+    fileprivate var storingCharacters: Bool = false
+    private var characterBuffer: Data = Data()
     
     // Overall state of the importer, used to exit the run loop.
     private var done: Bool = false
     
     // State variable used to determine whether or not to ignore a given XML element
-    private var parsingASong: Bool = false
+    fileprivate var parsingASong: Bool = false
     
     // The number of parsed songs is tracked so that the autorelease pool for the parsing thread can be periodically
     // emptied to keep the memory footprint under control.
@@ -76,10 +76,10 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     // A reference to the current song the importer is working with.
     private var _currentSong: Song?
     
-    private var session: NSURLSession!
-    private var sessionTask: NSURLSessionDataTask?
+    private var session: URLSession!
+    private var sessionTask: URLSessionDataTask?
     
-    private var dateFormatter: NSDateFormatter!
+    fileprivate var dateFormatter: DateFormatter!
     
     private var rankOfCurrentSong: Int = 0
     
@@ -90,26 +90,26 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     
     override func main() {
         
-        if self.delegate?.respondsToSelector(#selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
-            NSNotificationCenter.defaultCenter().addObserver(self.delegate!,
+        if self.delegate?.responds(to: #selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
+            NotificationCenter.default.addObserver(self.delegate!,
                 selector: #selector(iTunesRSSImporterDelegate.importerDidSave(_:)),
-                name: NSManagedObjectContextDidSaveNotification,
+                name: .NSManagedObjectContextDidSave,
                 object: self.insertionContext)
         }
         self.done = false
-        dateFormatter = NSDateFormatter()
-        self.dateFormatter.dateStyle = .LongStyle
-        self.dateFormatter.timeStyle = .NoStyle
+        dateFormatter = DateFormatter()
+        self.dateFormatter.dateStyle = .long
+        self.dateFormatter.timeStyle = .none
         // necessary because iTunes RSS feed is not localized, so if the device region has been set to other than US
         // the date formatter must be set to US locale in order to parse the dates
-        self.dateFormatter.locale = NSLocale(localeIdentifier: "US")
-        characterBuffer = NSMutableData()
+        self.dateFormatter.locale = Locale(identifier: "US")
+        characterBuffer = Data()
         
         // create the session with the request and start loading the data
-        let request = NSURLRequest(URL: self.iTunesURL!)
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        session = NSURLSession(configuration: configuration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-        sessionTask = self.session.dataTaskWithRequest(request)
+        let request = URLRequest(url: self.iTunesURL!)
+        let configuration = URLSessionConfiguration.default
+        session = URLSession(configuration: configuration, delegate: self, delegateQueue: OperationQueue.main)
+        sessionTask = self.session.dataTask(with: request)
         if self.sessionTask != nil {
             
             self.sessionTask!.resume()
@@ -119,9 +119,9 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
             // The second argument, self, will be passed as user data to each of the SAX handlers. The last three arguments
             // are left blank to avoid creating a tree in memory.
             //
-            context = xmlCreatePushParserCtxt(&simpleSAXHandlerStruct, UnsafeMutablePointer(unsafeAddressOf(self)), nil, 0, nil)
+            context = xmlCreatePushParserCtxt(&simpleSAXHandlerStruct, Unmanaged.passUnretained(self).toOpaque(), nil, 0, nil)
             repeat {
-                NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate.distantFuture())
+                RunLoop.current.run(mode: .defaultRunLoopMode, before: .distantFuture)
             } while !self.done
             
             // Display the total time spent finding a specific object for a relationship
@@ -129,19 +129,19 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
             
             // Release resources used only in this thread.
             xmlFreeParserCtxt(self.context)
-            characterBuffer = nil
+            characterBuffer = Data()
             self.dateFormatter = nil
             self.currentSong = nil
             theCache = nil
             
             do {
                 try self.insertionContext.save()
-            } catch let saveError as NSError {
+            } catch let saveError {
                 fatalError("Unhandled error saving managed object context in import thread: \(saveError.localizedDescription)")
             }
-            if self.delegate?.respondsToSelector(#selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
-                NSNotificationCenter.defaultCenter().removeObserver(self.delegate!,
-                    name: NSManagedObjectContextDidSaveNotification,
+            if self.delegate?.responds(to: #selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
+                NotificationCenter.default.removeObserver(self.delegate!,
+                    name: .NSManagedObjectContextDidSave,
                     object: self.insertionContext)
             }
             
@@ -157,14 +157,14 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
         return _insertionContext
     }()
     
-    private func forwardError(error: NSError) {
+    private func forwardError(_ error: Error) {
         
         self.delegate?.importer?(self, didFailWithError: error)
     }
     
     private lazy var songEntityDescription: NSEntityDescription = {
         
-        let _songEntityDescription = NSEntityDescription.entityForName("Song", inManagedObjectContext: self.insertionContext)
+        let _songEntityDescription = NSEntityDescription.entity(forEntityName: "Song", in: self.insertionContext)
         return _songEntityDescription!
     }()
     
@@ -182,13 +182,13 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
         }
     }
     
-    private var currentSong: Song! {
+    fileprivate var currentSong: Song! {
         get {
             
             if _currentSong == nil {
-                _currentSong = Song(entity: self.songEntityDescription, insertIntoManagedObjectContext: self.insertionContext)
+                _currentSong = Song(entity: self.songEntityDescription, insertInto: self.insertionContext)
                 rankOfCurrentSong += 1
-                _currentSong!.rank = rankOfCurrentSong
+                _currentSong!.rank = rankOfCurrentSong as NSNumber?
             }
             return _currentSong
         }
@@ -202,21 +202,23 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     
     // Sent when data is available for the delegate to consume.
     //
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         
         // Process the downloaded chunk of data.
-        xmlParseChunk(self.context, UnsafePointer(data.bytes), Int32(data.length), 0)
+        data.withUnsafeBytes {bytes in
+            _ = xmlParseChunk(self.context, bytes, Int32(data.count), 0)
+        }
     }
     
     // Sent as the last message related to a specific task.
     // Error may be nil, which implies that no error occurred and this task is complete.
     //
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         if let error = error {
             
             if #available(iOS 9.0, *) {
-                if error.code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
+                if (error as NSError).code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
                     // if you get error NSURLErrorAppTransportSecurityRequiresSecureConnection (-1022),
                     // then your Info.plist has not been properly configured to match the target server.
                     //
@@ -224,7 +226,7 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
                 }
             }
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self.forwardError(error)
             }
         }
@@ -241,7 +243,7 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     
     private let kImportBatchSize = 20
     
-    private func finishedCurrentSong() {
+    fileprivate func finishedCurrentSong() {
         
         self.parsingASong = false
         self.currentSong = nil
@@ -251,7 +253,7 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
             
             do {
                 try self.insertionContext.save()
-            } catch let saveError as NSError {
+            } catch let saveError {
                 fatalError("Unhandled error saving managed object context in import thread: \(saveError.localizedDescription)")
             }
             self.countForCurrentBatch = 0
@@ -261,17 +263,16 @@ class iTunesRSSImporter: NSOperation, NSURLSessionDataDelegate {
     /*
     Character data is appended to a buffer until the current element ends.
     */
-    private func appendCharacters(charactersFound: UnsafePointer<CChar>, length: Int) {
+    fileprivate func appendCharacters(_ charactersFound: UnsafePointer<xmlChar>, length: Int) {
         
-        self.characterBuffer?.appendBytes(charactersFound, length: length)
+        self.characterBuffer.append(charactersFound, count: length)
     }
     
-    private var currentString: String {
+    fileprivate var currentString: String {
         
         // Create a string with the character data using UTF-8 encoding. UTF-8 is the default XML data encoding.
-        //### This may not work for multi-byte encoding...
-        let currentString = String(data: self.characterBuffer!, encoding: NSUTF8StringEncoding)
-        self.characterBuffer!.length = 0
+        let currentString = String(data: self.characterBuffer, encoding: .utf8)
+        self.characterBuffer.count = 0
         return currentString!
     }
     
@@ -307,12 +308,14 @@ in a buffer. Some of the child nodes use a namespace prefix.
 private let startElementSAX: startElementNsSAX2Func = {parsingContext, localname, prefix, URI,
     nb_namespaces, namespaces, nb_attributes, nb_defaulted, attributes in
     
-    let importer = unsafeBitCast(parsingContext, iTunesRSSImporter.self)
+    let importer = Unmanaged<iTunesRSSImporter>.fromOpaque(parsingContext!).takeUnretainedValue()
     // The second parameter to strncmp is the name of the element, which we known from the XML schema of the feed.
     // The third parameter to strncmp is the number of characters in the element name, plus 1 for the null terminator.
-    if prefix == nil && strncmp(UnsafePointer(localname), kName_Item, kLength_Item) == 0 {
+    let pLocalname = UnsafeRawPointer(localname!).assumingMemoryBound(to: CChar.self)
+    let pPrefix = prefix.map{UnsafeRawPointer($0).assumingMemoryBound(to: CChar.self)}
+    if prefix == nil && strncmp(pLocalname, kName_Item, kLength_Item) == 0 {
         importer.parsingASong = true
-    } else if importer.parsingASong && ( (prefix == nil && (strncmp(UnsafePointer(localname), kName_Title, kLength_Title) == 0 || strncmp(UnsafePointer(localname), kName_Category, kLength_Category) == 0)) || ((prefix != nil && strncmp(UnsafePointer(prefix), kName_Itms, kLength_Itms) == 0) && (strncmp(UnsafePointer(localname), kName_Artist, kLength_Artist) == 0 || strncmp(UnsafePointer(localname), kName_Album, kLength_Album) == 0 || strncmp(UnsafePointer(localname), kName_ReleaseDate, kLength_ReleaseDate) == 0)))
+    } else if importer.parsingASong && ( (prefix == nil && (strncmp(pLocalname, kName_Title, kLength_Title) == 0 || strncmp(pLocalname, kName_Category, kLength_Category) == 0)) || ((prefix != nil && strncmp(pPrefix, kName_Itms, kLength_Itms) == 0) && (strncmp(pLocalname, kName_Artist, kLength_Artist) == 0 || strncmp(pLocalname, kName_Album, kLength_Album) == 0 || strncmp(pLocalname, kName_ReleaseDate, kLength_ReleaseDate) == 0)))
     {
         importer.storingCharacters = true
     }
@@ -327,28 +330,30 @@ contents and store that with the current Song object.
 */
 private let endElementSAX: endElementNsSAX2Func = {parsingContext, localname, prefix, URI in
     
-    let importer = unsafeBitCast(parsingContext, iTunesRSSImporter.self)
+    let importer = Unmanaged<iTunesRSSImporter>.fromOpaque(parsingContext!).takeUnretainedValue()
     if !importer.parsingASong {return}
+    let pLocalname = UnsafeRawPointer(localname!).assumingMemoryBound(to: CChar.self)
+    let pPrefix = prefix.map{UnsafeRawPointer($0).assumingMemoryBound(to: CChar.self)}
     if prefix == nil {
-        if strncmp(UnsafePointer(localname), kName_Item, kLength_Item) == 0 {
+        if strncmp(pLocalname, kName_Item, kLength_Item) == 0 {
             importer.finishedCurrentSong()
-        } else if strncmp(UnsafePointer(localname), kName_Title, kLength_Title) == 0 {
+        } else if strncmp(pLocalname, kName_Title, kLength_Title) == 0 {
             importer.currentSong.title = importer.currentString
-        } else if strncmp(UnsafePointer(localname), kName_Category, kLength_Category) == 0 {
-            let before = NSDate.timeIntervalSinceReferenceDate()
+        } else if strncmp(pLocalname, kName_Category, kLength_Category) == 0 {
+            let before = Date.timeIntervalSinceReferenceDate
             let category = importer.theCache.categoryWithName(importer.currentString)
-            let delta = NSDate.timeIntervalSinceReferenceDate() - before
+            let delta = Date.timeIntervalSinceReferenceDate - before
             iTunesRSSImporter.lookuptime += delta
             importer.currentSong.category = category
         }
-    } else if strncmp(UnsafePointer(prefix), kName_Itms, kLength_Itms) == 0 {
-        if strncmp(UnsafePointer(localname), kName_Artist, kLength_Artist) == 0 {
+    } else if strncmp(pPrefix, kName_Itms, kLength_Itms) == 0 {
+        if strncmp(pLocalname, kName_Artist, kLength_Artist) == 0 {
             importer.currentSong.artist = importer.currentString
-        } else if strncmp(UnsafePointer(localname), kName_Album, kLength_Album) == 0 {
+        } else if strncmp(pLocalname, kName_Album, kLength_Album) == 0 {
             importer.currentSong.album = importer.currentString
-        } else if strncmp(UnsafePointer(localname), kName_ReleaseDate, kLength_ReleaseDate) == 0 {
+        } else if strncmp(pLocalname, kName_ReleaseDate, kLength_ReleaseDate) == 0 {
             let dateString = importer.currentString
-            importer.currentSong.releaseDate = importer.dateFormatter.dateFromString(dateString)
+            importer.currentSong.releaseDate = importer.dateFormatter.date(from: dateString)
         }
     }
     importer.storingCharacters = false
@@ -359,11 +364,11 @@ This callback is invoked when the parser encounters character data inside a node
 */
 private let charactersFoundSAX: charactersSAXFunc = {parsingContext, characterArray, numberOfCharacters in
     
-    let importer = unsafeBitCast(parsingContext, iTunesRSSImporter.self)
+    let importer = Unmanaged<iTunesRSSImporter>.fromOpaque(parsingContext!).takeUnretainedValue()
     // A state variable, "storingCharacters", is set when nodes of interest begin and end.
     // This determines whether character data is handled or ignored.
     if !importer.storingCharacters {return}
-    importer.appendCharacters(UnsafePointer(characterArray), length: Int(numberOfCharacters))
+    importer.appendCharacters(UnsafePointer(characterArray!), length: Int(numberOfCharacters))
     
 }
 
@@ -371,7 +376,7 @@ private let charactersFoundSAX: charactersSAXFunc = {parsingContext, characterAr
 A production application should include robust error handling as part of its parsing implementation.
 The specifics of how errors are handled depends on the application.
 */
-typealias errorSAXFuncDummy = @convention(c) (parsingContext: UnsafeMutablePointer<Void>, errorMessage: UnsafePointer<CChar>)->Void
+typealias errorSAXFuncDummy = @convention(c) (_ parsingContext: UnsafeMutableRawPointer, _ errorMessage: UnsafePointer<CChar>)->Void
 private let errorEncounteredSAX: errorSAXFuncDummy = {parsingContext, errorMessage in
     
     // Handle errors as appropriate for your application.
@@ -404,7 +409,7 @@ private var simpleSAXHandlerStruct = xmlSAXHandler(
     processingInstruction: nil,
     comment: nil,
     warning: nil,
-    error: unsafeBitCast(errorEncounteredSAX, errorSAXFunc.self),
+    error: unsafeBitCast(errorEncounteredSAX, to: errorSAXFunc.self),
     fatalError: nil,
     getParameterEntity: nil,
     cdataBlock: nil,

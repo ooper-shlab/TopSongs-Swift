@@ -62,7 +62,7 @@ class CategoryCache: NSObject {
     
     deinit {
         
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         if cacheHitCount > 0 {NSLog("average cache hit cost:  %f", totalCacheHitCost/Double(cacheHitCount))}
         if cacheMissCount > 0 {NSLog("average cache miss cost: %f", totalCacheMissCost/Double(cacheMissCount))}
         
@@ -77,31 +77,31 @@ class CategoryCache: NSObject {
         set(aContext) {
             
             if _managedObjectContext != nil {
-                NSNotificationCenter.defaultCenter().removeObserver(self, name: NSManagedObjectContextDidSaveNotification, object: _managedObjectContext!)
+                NotificationCenter.default.removeObserver(self, name: NSNotification.Name.NSManagedObjectContextDidSave, object: _managedObjectContext!)
             }
             _managedObjectContext = aContext
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CategoryCache.managedObjectContextDidSave(_:)), name: NSManagedObjectContextDidSaveNotification, object: _managedObjectContext)
+            NotificationCenter.default.addObserver(self, selector: #selector(CategoryCache.managedObjectContextDidSave(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: _managedObjectContext)
         }
     }
     
     // When a managed object is first created, it has a temporary managed object ID. When the managed object context in which it was created is saved, the temporary ID is replaced with a permanent ID. The temporary IDs can no longer be used to retrieve valid managed objects. The cache handles the save notification by iterating through its cache nodes and removing any nodes with temporary IDs.
     // While it is possible force Core Data to provide a permanent ID before an object is saved, using the method -[ NSManagedObjectContext obtainPermanentIDsForObjects:error:], this method incurrs a trip to the database, resulting in degraded performance - the very thing we are trying to avoid.
-    @objc func managedObjectContextDidSave(notification: NSNotification) {
+    @objc func managedObjectContextDidSave(_ notification: Notification) {
         
         var keys: [String] = []
         for (key, cacheNode) in cache {
-            if cacheNode.objectID.temporaryID {
+            if cacheNode.objectID.isTemporaryID {
                 keys.append(key)
             }
         }
-        keys.forEach{cache.removeValueForKey($0)}
+        keys.forEach{cache.removeValue(forKey: $0)}
     }
     
     var categoryEntityDescription: NSEntityDescription? {
         get {
             
             if _categoryEntityDescription == nil {
-                _categoryEntityDescription = NSEntityDescription.entityForName("Category", inManagedObjectContext: _managedObjectContext!)
+                _categoryEntityDescription = NSEntityDescription.entity(forEntityName: "Category", in: _managedObjectContext!)
             }
             return _categoryEntityDescription
         }
@@ -118,7 +118,7 @@ class CategoryCache: NSObject {
             if _categoryNamePredicateTemplate == nil {
                 let leftHand = NSExpression(forKeyPath: "name")
                 let rightHand = NSExpression(forVariable: kCategoryNameSubstitutionVariable)
-                _categoryNamePredicateTemplate = NSComparisonPredicate(leftExpression: leftHand, rightExpression: rightHand, modifier: .DirectPredicateModifier, type: .LikePredicateOperatorType, options: [])
+                _categoryNamePredicateTemplate = NSComparisonPredicate(leftExpression: leftHand, rightExpression: rightHand, modifier: .direct, type: .like, options: [])
             }
             return _categoryNamePredicateTemplate
         }
@@ -130,30 +130,30 @@ class CategoryCache: NSObject {
     // Undefine this macro to compare performance without caching
     private let USE_CACHING = false//true
     
-    func categoryWithName(name: String) -> Category? {
+    func categoryWithName(_ name: String) -> Category? {
         
-        let before = NSDate.timeIntervalSinceReferenceDate()
+        let before = Date.timeIntervalSinceReferenceDate
         if USE_CACHING {
             // check cache
             if var cacheNode = cache[name] {
                 // cache hit, update access counter
                 cacheNode.accessCounter = accessCounter
                 accessCounter += 1
-                let category = managedObjectContext?.objectWithID(cacheNode.objectID) as! Category?
-                totalCacheHitCost += (NSDate.timeIntervalSinceReferenceDate() - before)
+                let category = managedObjectContext?.object(with: cacheNode.objectID) as! Category?
+                totalCacheHitCost += (Date.timeIntervalSinceReferenceDate - before)
                 cacheHitCount += 1
                 return category
             }
         }
         // cache missed, fetch from store - if not found in store there is no category object for the name and we must create one
-        let fetchRequest = NSFetchRequest()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
         fetchRequest.entity = self.categoryEntityDescription
-        let predicate = self.categoryNamePredicateTemplate?.predicateWithSubstitutionVariables([kCategoryNameSubstitutionVariable: name])
+        let predicate = self.categoryNamePredicateTemplate?.withSubstitutionVariables([kCategoryNameSubstitutionVariable: name])
         fetchRequest.predicate = predicate
         let fetchResults: [AnyObject]
         do {
-            fetchResults = try managedObjectContext!.executeFetchRequest(fetchRequest)
-        } catch let error as NSError {
+            fetchResults = try managedObjectContext!.fetch(fetchRequest)
+        } catch let error {
             fatalError("Unhandled error executing fetch request in import thread: \(error.localizedDescription)")
         }
         
@@ -163,7 +163,7 @@ class CategoryCache: NSObject {
             category = fetchResults[0] as! Category
         } else {
             // category not in store, must create a new category object
-            category = Category(entity: self.categoryEntityDescription!, insertIntoManagedObjectContext:_managedObjectContext!)
+            category = Category(entity: self.categoryEntityDescription!, insertInto:_managedObjectContext!)
             category.name = name
         }
         if USE_CACHING {
@@ -171,15 +171,15 @@ class CategoryCache: NSObject {
             // first check to see if cache is full
             if cache.count >= cacheSize {
                 // evict least recently used (LRU) item from cache
-                let (keyOfOldestCacheNode, _) = cache.minElement{$0.1.accessCounter < $1.1.accessCounter}!
+                let (keyOfOldestCacheNode, _) = cache.min{$0.1.accessCounter < $1.1.accessCounter}!
                 // remove from the cache
-                cache.removeValueForKey(keyOfOldestCacheNode)
+                cache.removeValue(forKey: keyOfOldestCacheNode)
             }
             let cacheNode = (category.objectID, accessCounter)
             accessCounter += 1
             cache[name] = cacheNode
         }
-        totalCacheMissCost += (NSDate.timeIntervalSinceReferenceDate() - before)
+        totalCacheMissCost += (Date.timeIntervalSinceReferenceDate - before)
         cacheMissCount += 1
         return category
     }

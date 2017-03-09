@@ -22,7 +22,7 @@ class SongsViewController: UITableViewController {
     var managedObjectContext: NSManagedObjectContext?
     
     private var detailController: SongDetailsController?
-    private var _fetchedResultsController: NSFetchedResultsController?
+    private var _fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
     @IBOutlet private var fetchSectioningControl: UISegmentedControl!
     
     
@@ -44,18 +44,18 @@ class SongsViewController: UITableViewController {
         
         do {
             try self.fetchedResultsController?.performFetch()
-        } catch let error as NSError {
+        } catch let error {
             NSLog("Unhandled error performing fetch at SongsViewController.m, line %d: %@", Int32(#line), error.localizedDescription)
         }
         self.tableView.reloadData()
     }
     
-    private var fetchedResultsController: NSFetchedResultsController? {
+    private var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>? {
         get {
             
             if _fetchedResultsController == nil {
-                let fetchRequest = NSFetchRequest()
-                fetchRequest.entity = NSEntityDescription.entityForName("Song", inManagedObjectContext: self.managedObjectContext!)
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+                fetchRequest.entity = NSEntityDescription.entity(forEntityName: "Song", in: self.managedObjectContext!)
                 let sortDescriptors: [NSSortDescriptor]
                 var sectionNameKeyPath: String? = nil
                 if self.fetchSectioningControl.selectedSegmentIndex == 1 {
@@ -80,18 +80,18 @@ class SongsViewController: UITableViewController {
     
     //MARK: - UITableViewDataSource
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         
         return self.fetchedResultsController?.sections?.count ?? 0
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         let sectionInfo = self.fetchedResultsController?.sections?[section]
         return sectionInfo?.numberOfObjects ?? 0
     }
     
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         
         let sectionInfo = self.fetchedResultsController?.sections?[section]
         if self.fetchSectioningControl.selectedSegmentIndex == 0 {
@@ -101,25 +101,25 @@ class SongsViewController: UITableViewController {
         }
     }
     
-    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
         // return list of section titles to display in section index view (e.g. "ABCD...Z#")
         return self.fetchedResultsController?.sectionIndexTitles
     }
     
-    override func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
+    override func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         
         // tell table which section corresponds to section title/index (e.g. "B",1))
-        return self.fetchedResultsController?.sectionForSectionIndexTitle(title, atIndex: index) ?? 0
+        return self.fetchedResultsController?.section(forSectionIndexTitle: title, at: index) ?? 0
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let kCellIdentifier = "SongCell"
         
-        let cell = self.tableView.dequeueReusableCellWithIdentifier(kCellIdentifier, forIndexPath: indexPath)
-        let song = self.fetchedResultsController?.objectAtIndexPath(indexPath) as! Song?
-        cell.textLabel!.text = String(format: NSLocalizedString("#%d %@", comment: "#%d %@"), song?.rank?.integerValue ?? 0, song?.title ?? "")
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: kCellIdentifier, for: indexPath)
+        let song = self.fetchedResultsController?.object(at: indexPath) as! Song?
+        cell.textLabel!.text = String(format: NSLocalizedString("#%d %@", comment: "#%d %@"), song?.rank?.intValue ?? 0, song?.title ?? "")
         
         return cell
     }
@@ -127,13 +127,13 @@ class SongsViewController: UITableViewController {
     
     //MARK: - Segue support
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "showDetail" {
             
-            let detailsController = segue.destinationViewController as! SongDetailsController
+            let detailsController = segue.destination as! SongDetailsController
             let selectedIndexPath = self.tableView.indexPathForSelectedRow!
-            detailsController.song = self.fetchedResultsController?.objectAtIndexPath(selectedIndexPath) as! Song?
+            detailsController.song = self.fetchedResultsController?.object(at: selectedIndexPath) as! Song?
         }
     }
     

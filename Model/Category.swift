@@ -19,6 +19,6 @@ import CoreData
 class Category: NSManagedObject {
 
     @NSManaged var name: String?
-    @NSManaged var songs: NSSet?
+    @NSManaged var songs: Set<Song>?
 
 }

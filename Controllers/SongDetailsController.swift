@@ -23,39 +23,39 @@ class SongDetailsController: UITableViewController {
     
     //MARK: -
     
-    private lazy var dateFormatter: NSDateFormatter = {
+    private lazy var dateFormatter: DateFormatter = {
         
-        let _dateFormatter = NSDateFormatter()
-        _dateFormatter.dateStyle = .MediumStyle
-        _dateFormatter.timeStyle = .NoStyle
+        let _dateFormatter = DateFormatter()
+        _dateFormatter.dateStyle = .medium
+        _dateFormatter.timeStyle = .none
         return _dateFormatter
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self,
+        NotificationCenter.default.addObserver(self,
             selector: #selector(SongDetailsController.localeChanged(_:)),
-            name: NSCurrentLocaleDidChangeNotification,
+            name: NSLocale.currentLocaleDidChangeNotification,
             object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self,
-            name: NSCurrentLocaleDidChangeNotification,
+        NotificationCenter.default.removeObserver(self,
+            name: NSLocale.currentLocaleDidChangeNotification,
             object: nil)
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return 4
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let kCellIdentifier = "SongDetailCell"
         
-        let cell = self.tableView.dequeueReusableCellWithIdentifier(kCellIdentifier, forIndexPath: indexPath)
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: kCellIdentifier, for: indexPath)
         
         switch indexPath.row {
         case 0:
@@ -69,21 +69,21 @@ class SongDetailsController: UITableViewController {
             cell.detailTextLabel!.text = self.song?.category?.name
         case 3:
             cell.textLabel!.text = NSLocalizedString("released", comment: "released label")
-            cell.detailTextLabel?.text = self.dateFormatter.stringFromDate((self.song?.releaseDate)!)
+            cell.detailTextLabel?.text = self.dateFormatter.string(from: (self.song?.releaseDate)! as Date)
         default:
             break
         }
         return cell
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return self.song?.title
     }
     
     
     //MARK: - Locale changes
     
-    func localeChanged(notif: NSNotification) {
+    func localeChanged(_ notif: Notification) {
         // the user changed the locale (region format) in Settings, so we are notified here to
         // update the date format in the table view cells
         //

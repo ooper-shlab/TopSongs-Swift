@@ -22,7 +22,7 @@ class Song: NSManagedObject {
     @NSManaged var category: Category?
     @NSManaged var rank: NSNumber?
     @NSManaged var album: String?
-    @NSManaged var releaseDate: NSDate?
+    @NSManaged var releaseDate: Date?
     @NSManaged var artist: String?
 
 }
