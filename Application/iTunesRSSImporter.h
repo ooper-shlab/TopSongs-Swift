@@ -1,13 +1,12 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
  Downloads, parses, and imports the iTunes top songs RSS feed into Core Data.
  */
 
-#import <UIKit/UIKit.h>
-#import <libxml/tree.h>
+@import UIKit;
 
 @class iTunesRSSImporter, Song, CategoryCache;
 
@@ -32,7 +31,6 @@
 @interface iTunesRSSImporter : NSOperation
 
 @property (nonatomic, strong, readonly) CategoryCache *theCache;
-
 @property (nonatomic, strong) NSURL *iTunesURL;
 @property (nonatomic, assign) id <iTunesRSSImporterDelegate> delegate;
 @property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;

@@ -6,7 +6,7 @@
 //
 //
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
 
  Abstract:
@@ -31,7 +31,7 @@ class SongsViewController: UITableViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        self.fetch()   // start fetching songs from our data store
+        self.fetch()   // Start fetching songs from our data store.
     }
     
     @IBAction func changeFetchSectioning(_: AnyObject) {
@@ -103,13 +103,13 @@ class SongsViewController: UITableViewController {
     
     override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
-        // return list of section titles to display in section index view (e.g. "ABCD...Z#")
+        // Return list of section titles to display in section index view (e.g. "ABCD...Z#").
         return self.fetchedResultsController?.sectionIndexTitles
     }
     
     override func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         
-        // tell table which section corresponds to section title/index (e.g. "B",1))
+        // Tell table which section corresponds to section title/index (e.g. "B",1)).
         return self.fetchedResultsController?.section(forSectionIndexTitle: title, at: index) ?? 0
     }
     
@@ -130,7 +130,6 @@ class SongsViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "showDetail" {
-            
             let detailsController = segue.destination as! SongDetailsController
             let selectedIndexPath = self.tableView.indexPathForSelectedRow!
             detailsController.song = self.fetchedResultsController?.object(at: selectedIndexPath) as! Song?

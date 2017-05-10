@@ -6,7 +6,7 @@
 //
 //
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
 
  Abstract:
@@ -130,8 +130,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, iTunesRSSImporterDelegate {
         get {
             
             if _managedObjectContext == nil {
-                _managedObjectContext = NSManagedObjectContext()
-                _managedObjectContext!.persistentStoreCoordinator = self.persistentStoreCoordinator
+                _managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+                self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
             }
             return _managedObjectContext!
         }
@@ -156,7 +156,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, iTunesRSSImporterDelegate {
     }
     
     
-    //MARK: - <iTunesRSSImporterDelegate> Implementation
+    //MARK: - iTunesRSSImporterDelegate
     
     // This method will be called on a secondary thread. Forward to the main thread for safe handling of UIKit objects.
     func importerDidSave(_ saveNotification: Notification) {

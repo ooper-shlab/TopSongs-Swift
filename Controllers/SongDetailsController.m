@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
@@ -90,8 +90,8 @@
 
 - (void)localeChanged:(NSNotification *)notif
 {
-    // the user changed the locale (region format) in Settings, so we are notified here to
-    // update the date format in the table view cells
+    // The user changed the locale (region format) in Settings, so we are notified here to
+    // update the date format in the table view cells.
     //
     [self.tableView reloadData];
 }

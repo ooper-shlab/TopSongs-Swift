@@ -63,9 +63,8 @@ class CategoryCache: NSObject {
     deinit {
         
         NotificationCenter.default.removeObserver(self)
-        if cacheHitCount > 0 {NSLog("average cache hit cost:  %f", totalCacheHitCost/Double(cacheHitCount))}
-        if cacheMissCount > 0 {NSLog("average cache miss cost: %f", totalCacheMissCost/Double(cacheMissCount))}
-        
+        if self.cacheHitCount > 0 {NSLog("average cache hit cost:  %f", self.totalCacheHitCost/Double(self.cacheHitCount))}
+        if self.cacheMissCount > 0 {NSLog("average cache miss cost: %f", self.totalCacheMissCost/Double(self.cacheMissCount))}
     }
     
     // Implement the "set" accessor rather than depending on @synthesize so that we can set up registration
@@ -127,16 +126,16 @@ class CategoryCache: NSObject {
         }
     }
     
-    // Undefine this macro to compare performance without caching
+    // Undefine this macro to compare performance without caching.
     private let USE_CACHING = false//true
     
     func categoryWithName(_ name: String) -> Category? {
         
         let before = Date.timeIntervalSinceReferenceDate
         if USE_CACHING {
-            // check cache
+            // Check cache.
             if var cacheNode = cache[name] {
-                // cache hit, update access counter
+                // Cache hit, update access counter.
                 cacheNode.accessCounter = accessCounter
                 accessCounter += 1
                 let category = managedObjectContext?.object(with: cacheNode.objectID) as! Category?
@@ -145,7 +144,9 @@ class CategoryCache: NSObject {
                 return category
             }
         }
-        // cache missed, fetch from store - if not found in store there is no category object for the name and we must create one
+        // Cache missed, fetch from store -
+        // if not found in store there is no category object for the name and we must create one.
+        //
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
         fetchRequest.entity = self.categoryEntityDescription
         let predicate = self.categoryNamePredicateTemplate?.withSubstitutionVariables([kCategoryNameSubstitutionVariable: name])
@@ -159,25 +160,25 @@ class CategoryCache: NSObject {
         
         let category: Category
         if !fetchResults.isEmpty {
-            // get category from fetch
+            // Get category from fetch.
             category = fetchResults[0] as! Category
         } else {
-            // category not in store, must create a new category object
+            // Category not in store, must create a new category object.
             category = Category(entity: self.categoryEntityDescription!, insertInto:_managedObjectContext!)
             category.name = name
         }
         if USE_CACHING {
-            // add to cache
-            // first check to see if cache is full
+            // Add to cache.
+            // First check to see if cache is full.
             if cache.count >= cacheSize {
-                // evict least recently used (LRU) item from cache
-                let (keyOfOldestCacheNode, _) = cache.min{$0.1.accessCounter < $1.1.accessCounter}!
-                // remove from the cache
+                // Evict least recently used (LRU) item from cache.
+                let (keyOfOldestCacheNode, _) = cache.min{$0.value.accessCounter < $1.value.accessCounter}!
+                // Remove from the cache.
                 cache.removeValue(forKey: keyOfOldestCacheNode)
             }
             let cacheNode = (category.objectID, accessCounter)
             accessCounter += 1
-            cache[name] = cacheNode
+            cache[name] = cacheNode;
         }
         totalCacheMissCost += (Date.timeIntervalSinceReferenceDate - before)
         cacheMissCount += 1

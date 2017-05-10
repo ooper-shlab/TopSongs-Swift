@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
@@ -26,7 +26,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    [self fetch];   // start fetching songs from our data store
+    [self fetch];   // Start fetching songs from our data store.
 }
 
 - (IBAction)changeFetchSectioning:(id)sender {
@@ -50,7 +50,7 @@
         fetchRequest.entity = [NSEntityDescription entityForName:@"Song" inManagedObjectContext:self.managedObjectContext];
         NSArray *sortDescriptors = nil;
         NSString *sectionNameKeyPath = nil;
-        if ((self.fetchSectioningControl).selectedSegmentIndex == 1) {
+        if (self.fetchSectioningControl.selectedSegmentIndex == 1) {
             sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"category.name" ascending:YES], [[NSSortDescriptor alloc] initWithKey:@"rank" ascending:YES]];
             sectionNameKeyPath = @"category.name";
         } else {
@@ -82,7 +82,7 @@
 - (NSString *)tableView:(UITableView *)table titleForHeaderInSection:(NSInteger)section {
     
     id <NSFetchedResultsSectionInfo> sectionInfo = (self.fetchedResultsController.sections)[section];
-    if ((self.fetchSectioningControl).selectedSegmentIndex == 0) {
+    if (self.fetchSectioningControl.selectedSegmentIndex == 0) {
         return [NSString stringWithFormat:NSLocalizedString(@"Top %d songs", @"Top %d songs"), sectionInfo.numberOfObjects];
     } else {
         return [NSString stringWithFormat:NSLocalizedString(@"%@ - %d songs", @"%@ - %d songs"), sectionInfo.name, sectionInfo.numberOfObjects];
@@ -91,13 +91,13 @@
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)table {
     
-    // return list of section titles to display in section index view (e.g. "ABCD...Z#")
-    return (self.fetchedResultsController).sectionIndexTitles;
+    // Return list of section titles to display in section index view (e.g. "ABCD...Z#").
+    return self.fetchedResultsController.sectionIndexTitles;
 }
 
 - (NSInteger)tableView:(UITableView *)table sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
     
-    // tell table which section corresponds to section title/index (e.g. "B",1))
+    // Tell table which section corresponds to section title/index (e.g. "B",1)).
     return [self.fetchedResultsController sectionForSectionIndexTitle:title atIndex:index];
 }
 
@@ -107,7 +107,8 @@
     
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
     Song *song = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"#%d %@", @"#%d %@"), (song.rank).integerValue, song.title];
+    cell.textLabel.text =
+        [NSString stringWithFormat:NSLocalizedString(@"#%d %@", @"#%d %@"), song.rank.integerValue, song.title];
     
     return cell;
 }
@@ -118,9 +119,8 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
     if ([segue.identifier isEqualToString:@"showDetail"]) {
-        
         SongDetailsController *detailsController = (SongDetailsController *)segue.destinationViewController;
-        NSIndexPath *selectedIndexPath = (self.tableView).indexPathForSelectedRow;
+        NSIndexPath *selectedIndexPath = self.tableView.indexPathForSelectedRow;
         detailsController.song = [self.fetchedResultsController objectAtIndexPath:selectedIndexPath];
     }
 }

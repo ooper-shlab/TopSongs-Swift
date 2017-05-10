@@ -6,7 +6,7 @@
 //
 //
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
 
  Abstract:
@@ -134,25 +134,27 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
             self.currentSong = nil
             theCache = nil
             
-            do {
-                try self.insertionContext.save()
-            } catch let saveError {
-                fatalError("Unhandled error saving managed object context in import thread: \(saveError.localizedDescription)")
-            }
-            if self.delegate?.responds(to: #selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
+            self.insertionContext.performAndWait {
+                do {
+                    try self.insertionContext.save()
+                } catch let saveError {
+                    fatalError("Unhandled error saving managed object context in import thread: \(saveError.localizedDescription)")
+                }
+                
+                if self.delegate?.responds(to: #selector(iTunesRSSImporterDelegate.importerDidSave(_:))) ?? false {
                 NotificationCenter.default.removeObserver(self.delegate!,
-                    name: .NSManagedObjectContextDidSave,
-                    object: self.insertionContext)
+                name:.NSManagedObjectContextDidSave, object: self.insertionContext)
+                }
+                
+                // Call our delegate to signify parse completion.
+                self.delegate?.importerDidFinishParsingData?(self)
             }
-            
-            // call our delegate to signify parse completion
-            self.delegate?.importerDidFinishParsingData?(self)
         }
     }
     
     lazy var insertionContext: NSManagedObjectContext = {
         
-        let _insertionContext = NSManagedObjectContext()
+        let _insertionContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         _insertionContext.persistentStoreCoordinator = self.persistentStoreCoordinator
         return _insertionContext
     }()

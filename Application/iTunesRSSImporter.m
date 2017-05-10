@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
@@ -117,25 +117,29 @@ static double lookuptime = 0;
         self.currentSong = nil;
         _theCache = nil;
         
-        NSError *saveError = nil;
-        NSAssert1([self.insertionContext save:&saveError], @"Unhandled error saving managed object context in import thread: %@", [saveError localizedDescription]);
-        if (self.delegate && [self.delegate respondsToSelector:@selector(importerDidSave:)]) {
-            [[NSNotificationCenter defaultCenter] removeObserver:self.delegate
-                                                            name:NSManagedObjectContextDidSaveNotification
-                                                          object:self.insertionContext];
-        }
-        
-        // call our delegate to signify parse completion
-        if (self.delegate != nil && [self.delegate respondsToSelector:@selector(importerDidFinishParsingData:)]) {
-            [self.delegate importerDidFinishParsingData:self];
-        }
+        [self.insertionContext performBlockAndWait:^{
+            NSError *saveError = nil;
+            NSAssert1([self.insertionContext save:&saveError],
+                        @"Unhandled error saving managed object context in import thread: %@", [saveError localizedDescription]);
+            
+            if (self.delegate && [self.delegate respondsToSelector:@selector(importerDidSave:)]) {
+                [[NSNotificationCenter defaultCenter] removeObserver:self.delegate
+                                                                name:NSManagedObjectContextDidSaveNotification
+                                                              object:self.insertionContext];
+            }
+            
+            // Call our delegate to signify parse completion.
+            if (self.delegate != nil && [self.delegate respondsToSelector:@selector(importerDidFinishParsingData:)]) {
+                [self.delegate importerDidFinishParsingData:self];
+            }
+        }];
     }
 }
 
 - (NSManagedObjectContext *)insertionContext {
     
     if (_insertionContext == nil) {
-        _insertionContext = [[NSManagedObjectContext alloc] init];
+        _insertionContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         _insertionContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
     }
     return _insertionContext;
@@ -192,7 +196,7 @@ static double lookuptime = 0;
     
     if (error != nil) {
 
-        if ([error code] == NSURLErrorAppTransportSecurityRequiresSecureConnection)
+        if (error.code == NSURLErrorAppTransportSecurityRequiresSecureConnection)
         {
             // if you get error NSURLErrorAppTransportSecurityRequiresSecureConnection (-1022),
             // then your Info.plist has not been properly configured to match the target server.

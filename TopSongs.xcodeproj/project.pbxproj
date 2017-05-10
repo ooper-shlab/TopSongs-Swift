@@ -7,32 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		302917300F5E1F64006885A5 /* TopSongs.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 3029172F0F5E1F64006885A5 /* TopSongs.xcdatamodel */; };
-		302917390F5E2FD7006885A5 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 302917380F5E2FD7006885A5 /* CoreData.framework */; };
-		3097D6EF0E3939E700159D5D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3097D6EE0E3939E700159D5D /* CoreGraphics.framework */; };
 		538069E717DA321A00008878 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 538069E517DA321A00008878 /* Storyboard.storyboard */; };
 		539E3D7C1BB34E280034E0D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 539E3D7A1BB34E280034E0D6 /* LaunchScreen.storyboard */; };
 		539E74ED1BB30DF1007B6E93 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 539E74EC1BB30DF1007B6E93 /* libxml2.tbd */; };
 		539E74F11BB30EB6007B6E93 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 539E74F01BB30EB6007B6E93 /* Images.xcassets */; };
 		539E74F51BB30FBC007B6E93 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 539E74F31BB30FBC007B6E93 /* Localizable.strings */; };
-		D75F7A661C12B38900BECE98 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75F7A651C12B38900BECE98 /* Category.swift */; };
-		D75F7A681C12B40800BECE98 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75F7A671C12B40800BECE98 /* Song.swift */; };
-		D75F7A721C12B57400BECE98 /* SongDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75F7A711C12B57400BECE98 /* SongDetailsController.swift */; };
-		D7B3E0DD1C134FF800435A86 /* SongsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E0DC1C134FF800435A86 /* SongsViewController.swift */; };
-		D7B3E0DF1C13522C00435A86 /* CategoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E0DE1C13522C00435A86 /* CategoryCache.swift */; };
-		D7B3E1251C147C4F00435A86 /* iTunesRSSImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E1241C147C4F00435A86 /* iTunesRSSImporter.swift */; };
-		D7B3E1281C14C48000435A86 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B3E1271C14C48000435A86 /* AppDelegate.swift */; };
+		D73CD9121E870A30004020BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD90F1E870A30004020BF /* AppDelegate.swift */; };
+		D73CD9131E870A30004020BF /* CategoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD9101E870A30004020BF /* CategoryCache.swift */; };
+		D73CD9141E870A30004020BF /* iTunesRSSImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD9111E870A30004020BF /* iTunesRSSImporter.swift */; };
+		D73CD9171E870A46004020BF /* SongDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD9151E870A46004020BF /* SongDetailsController.swift */; };
+		D73CD9181E870A46004020BF /* SongsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD9161E870A46004020BF /* SongsViewController.swift */; };
+		D73CD91B1E870A5C004020BF /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD9191E870A5C004020BF /* Category.swift */; };
+		D73CD91C1E870A5C004020BF /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73CD91A1E870A5C004020BF /* Song.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* TopSongs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopSongs.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3029172F0F5E1F64006885A5 /* TopSongs.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = TopSongs.xcdatamodel; sourceTree = "<group>"; };
-		302917380F5E2FD7006885A5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		3097D6EE0E3939E700159D5D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		539E3D7B1BB34E280034E0D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		539E74EA1BB30AE5007B6E93 /* ReadMe.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		539E74EC1BB30DF1007B6E93 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
@@ -40,16 +32,16 @@
 		539E74F21BB30F59007B6E93 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Storyboard.storyboard; sourceTree = "<group>"; };
 		539E74F41BB30FBC007B6E93 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D75F7A651C12B38900BECE98 /* Category.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
-		D75F7A671C12B40800BECE98 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
-		D75F7A711C12B57400BECE98 /* SongDetailsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailsController.swift; sourceTree = "<group>"; };
-		D7B3E0DC1C134FF800435A86 /* SongsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsViewController.swift; sourceTree = "<group>"; };
-		D7B3E0DE1C13522C00435A86 /* CategoryCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CategoryCache.swift; path = Application/CategoryCache.swift; sourceTree = "<group>"; };
-		D7B3E1241C147C4F00435A86 /* iTunesRSSImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = iTunesRSSImporter.swift; path = Application/iTunesRSSImporter.swift; sourceTree = "<group>"; };
-		D7B3E1261C147CB900435A86 /* TopSongs-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TopSongs-Bridging-Header.h"; sourceTree = "<group>"; };
-		D7B3E1271C14C48000435A86 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D7B3E1471C16EEA800435A86 /* README2.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README2.md; sourceTree = "<group>"; };
-		D7B3E1491C16EEBA00435A86 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		D73CD90B1E8709ED004020BF /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		D73CD90C1E8709ED004020BF /* README2.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README2.md; sourceTree = "<group>"; };
+		D73CD90F1E870A30004020BF /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Application/AppDelegate.swift; sourceTree = "<group>"; };
+		D73CD9101E870A30004020BF /* CategoryCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CategoryCache.swift; path = Application/CategoryCache.swift; sourceTree = "<group>"; };
+		D73CD9111E870A30004020BF /* iTunesRSSImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = iTunesRSSImporter.swift; path = Application/iTunesRSSImporter.swift; sourceTree = "<group>"; };
+		D73CD9151E870A46004020BF /* SongDetailsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailsController.swift; sourceTree = "<group>"; };
+		D73CD9161E870A46004020BF /* SongsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsViewController.swift; sourceTree = "<group>"; };
+		D73CD9191E870A5C004020BF /* Category.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		D73CD91A1E870A5C004020BF /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		D73CD91D1E877C4A004020BF /* TopSongs-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TopSongs-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,10 +50,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				539E74ED1BB30DF1007B6E93 /* libxml2.tbd in Frameworks */,
-				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
-				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
-				3097D6EF0E3939E700159D5D /* CoreGraphics.framework in Frameworks */,
-				302917390F5E2FD7006885A5 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,8 +59,8 @@
 		080E96DDFE201D6D7F000001 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				D7B3E0DC1C134FF800435A86 /* SongsViewController.swift */,
-				D75F7A711C12B57400BECE98 /* SongDetailsController.swift */,
+				D73CD9161E870A46004020BF /* SongsViewController.swift */,
+				D73CD9151E870A46004020BF /* SongDetailsController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -88,9 +76,10 @@
 		29B97314FDCFA39411CA2CEA /* TopSongs */ = {
 			isa = PBXGroup;
 			children = (
-				D7B3E1491C16EEBA00435A86 /* LICENSE.txt */,
+				D73CD91D1E877C4A004020BF /* TopSongs-Bridging-Header.h */,
+				D73CD90B1E8709ED004020BF /* LICENSE.txt */,
 				539E74EA1BB30AE5007B6E93 /* ReadMe.md */,
-				D7B3E1471C16EEA800435A86 /* README2.md */,
+				D73CD90C1E8709ED004020BF /* README2.md */,
 				302919DD0F60702C006885A5 /* Application */,
 				080E96DDFE201D6D7F000001 /* Controllers */,
 				302917510F5F084C006885A5 /* Model */,
@@ -106,8 +95,8 @@
 			children = (
 				539E74F01BB30EB6007B6E93 /* Images.xcassets */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				538069E517DA321A00008878 /* Storyboard.storyboard */,
 				539E74F31BB30FBC007B6E93 /* Localizable.strings */,
+				538069E517DA321A00008878 /* Storyboard.storyboard */,
 				539E3D7A1BB34E280034E0D6 /* LaunchScreen.storyboard */,
 			);
 			name = Resources;
@@ -117,10 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				539E74EC1BB30DF1007B6E93 /* libxml2.tbd */,
-				302917380F5E2FD7006885A5 /* CoreData.framework */,
-				3097D6EE0E3939E700159D5D /* CoreGraphics.framework */,
-				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
-				1D30AB110D05D00D00671497 /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -129,8 +114,8 @@
 			isa = PBXGroup;
 			children = (
 				3029172F0F5E1F64006885A5 /* TopSongs.xcdatamodel */,
-				D75F7A671C12B40800BECE98 /* Song.swift */,
-				D75F7A651C12B38900BECE98 /* Category.swift */,
+				D73CD91A1E870A5C004020BF /* Song.swift */,
+				D73CD9191E870A5C004020BF /* Category.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -138,10 +123,9 @@
 		302919DD0F60702C006885A5 /* Application */ = {
 			isa = PBXGroup;
 			children = (
-				D7B3E1271C14C48000435A86 /* AppDelegate.swift */,
-				D7B3E1241C147C4F00435A86 /* iTunesRSSImporter.swift */,
-				D7B3E0DE1C13522C00435A86 /* CategoryCache.swift */,
-				D7B3E1261C147CB900435A86 /* TopSongs-Bridging-Header.h */,
+				D73CD90F1E870A30004020BF /* AppDelegate.swift */,
+				D73CD9111E870A30004020BF /* iTunesRSSImporter.swift */,
+				D73CD9101E870A30004020BF /* CategoryCache.swift */,
 			);
 			name = Application;
 			sourceTree = "<group>";
@@ -172,8 +156,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						LastSwiftMigration = 0820;
@@ -220,14 +203,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7B3E1251C147C4F00435A86 /* iTunesRSSImporter.swift in Sources */,
-				D75F7A661C12B38900BECE98 /* Category.swift in Sources */,
-				D7B3E0DF1C13522C00435A86 /* CategoryCache.swift in Sources */,
-				D75F7A721C12B57400BECE98 /* SongDetailsController.swift in Sources */,
-				D75F7A681C12B40800BECE98 /* Song.swift in Sources */,
+				D73CD9131E870A30004020BF /* CategoryCache.swift in Sources */,
+				D73CD9121E870A30004020BF /* AppDelegate.swift in Sources */,
+				D73CD9141E870A30004020BF /* iTunesRSSImporter.swift in Sources */,
+				D73CD91B1E870A5C004020BF /* Category.swift in Sources */,
+				D73CD9181E870A46004020BF /* SongsViewController.swift in Sources */,
 				302917300F5E1F64006885A5 /* TopSongs.xcdatamodel in Sources */,
-				D7B3E1281C14C48000435A86 /* AppDelegate.swift in Sources */,
-				D7B3E0DD1C134FF800435A86 /* SongsViewController.swift in Sources */,
+				D73CD91C1E870A5C004020BF /* Song.swift in Sources */,
+				D73CD9171E870A46004020BF /* SongDetailsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,14 +249,13 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Prefix.pch;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$SDKROOT,",
@@ -295,12 +277,11 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Prefix.pch;
+				DEVELOPMENT_TEAM = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$SDKROOT,",
@@ -320,6 +301,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -356,6 +338,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;

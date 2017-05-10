@@ -1,12 +1,12 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
  Displays details about a song.
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @class Song;
 

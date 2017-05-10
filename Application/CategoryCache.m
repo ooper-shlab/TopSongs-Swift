@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
@@ -24,6 +24,28 @@
 
 #pragma mark -
 
+@interface CategoryCache ()
+
+@property (nonatomic, strong, readonly) NSEntityDescription *categoryEntityDescription;
+@property (nonatomic, strong, readonly) NSPredicate *categoryNamePredicateTemplate;
+
+// Number of objects that can be cached
+@property NSUInteger cacheSize;
+
+// A dictionary holds the actual cached items
+@property (nonatomic, strong) NSMutableDictionary *cache;
+
+// Counter used to determine the least recently touched item.
+@property (assign) NSUInteger accessCounter;
+
+// Some basic metrics are tracked to help determine the optimal cache size for the problem.
+@property (assign) CGFloat totalCacheHitCost;
+@property (assign) CGFloat totalCacheMissCost;
+@property (assign) NSUInteger cacheHitCount;
+@property (assign) NSUInteger cacheMissCount;
+@end
+
+
 @implementation CacheNode
 
 @synthesize objectID, accessCounter;
@@ -35,14 +57,14 @@
 
 @implementation CategoryCache
 
-@synthesize managedObjectContext, cacheSize, cache;
+@synthesize managedObjectContext, cacheSize, cache, categoryEntityDescription, categoryNamePredicateTemplate;
 
 - (instancetype)init {
     
     self = [super init];
     if (self != nil) {
         cacheSize = 15;
-        accessCounter = 0;
+        _accessCounter = 0;
         cache = [[NSMutableDictionary alloc] init];
     }
     return self;
@@ -51,10 +73,8 @@
 - (void)dealloc {
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (cacheHitCount > 0) NSLog(@"average cache hit cost:  %f", totalCacheHitCost/cacheHitCount);
-    if (cacheMissCount > 0) NSLog(@"average cache miss cost: %f", totalCacheMissCost/cacheMissCount);
-    categoryEntityDescription = nil;
-    categoryNamePredicateTemplate = nil;
+    if (self.cacheHitCount > 0) NSLog(@"average cache hit cost:  %f", self.totalCacheHitCost/self.cacheHitCount);
+    if (self.cacheMissCount > 0) NSLog(@"average cache miss cost: %f", self.totalCacheMissCost/self.cacheMissCount);
 }
 
 // Implement the "set" accessor rather than depending on @synthesize so that we can set up registration
@@ -76,7 +96,7 @@
     NSMutableArray *keys = [NSMutableArray array];
     for (NSString *key in cache) {
         cacheNode = cache[key];
-        if ((cacheNode.objectID).temporaryID) {
+        if (cacheNode.objectID.temporaryID) {
             [keys addObject:key];
         }
     }
@@ -103,25 +123,27 @@ static NSString * const kCategoryNameSubstitutionVariable = @"NAME";
     return categoryNamePredicateTemplate;
 }
 
-// Undefine this macro to compare performance without caching
+// Undefine this macro to compare performance without caching.
 #define USE_CACHING
 
 - (Category *)categoryWithName:(NSString *)name {
     
     NSTimeInterval before = [NSDate timeIntervalSinceReferenceDate];
 #ifdef USE_CACHING
-    // check cache
+    // Check cache.
     CacheNode *cacheNode = cache[name];
     if (cacheNode != nil) {
-        // cache hit, update access counter
-        cacheNode.accessCounter = accessCounter++;
+        // Cache hit, update access counter.
+        cacheNode.accessCounter = _accessCounter++;
         Category *category = (Category *)[managedObjectContext objectWithID:cacheNode.objectID];
-        totalCacheHitCost += ([NSDate timeIntervalSinceReferenceDate] - before);
-        cacheHitCount++;
+        _totalCacheHitCost += ([NSDate timeIntervalSinceReferenceDate] - before);
+        _cacheHitCount++;
         return category;
     }
 #endif
-    // cache missed, fetch from store - if not found in store there is no category object for the name and we must create one
+    // Cache missed, fetch from store -
+    // if not found in store there is no category object for the name and we must create one.
+    //
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     fetchRequest.entity = self.categoryEntityDescription;
     NSPredicate *predicate = [self.categoryNamePredicateTemplate predicateWithSubstitutionVariables:@{kCategoryNameSubstitutionVariable: name}];
@@ -132,18 +154,20 @@ static NSString * const kCategoryNameSubstitutionVariable = @"NAME";
 
     Category *category = nil;
     if (fetchResults.count > 0) {
-        // get category from fetch
+        // Get category from fetch.
         category = fetchResults[0];
     } else if (fetchResults.count == 0) {
-        // category not in store, must create a new category object 
-        category = [[Category alloc] initWithEntity:self.categoryEntityDescription insertIntoManagedObjectContext:managedObjectContext];
+        // Category not in store, must create a new category object.
+        category =
+            [[Category alloc] initWithEntity:self.categoryEntityDescription
+              insertIntoManagedObjectContext:managedObjectContext];
         category.name = name;
     }
 #ifdef USE_CACHING
-    // add to cache
-    // first check to see if cache is full
+    // Add to cache.
+    // First check to see if cache is full.
     if (cache.count >= cacheSize) {
-        // evict least recently used (LRU) item from cache
+        // Evict least recently used (LRU) item from cache.
         NSUInteger oldestAccessCount = UINT_MAX;
         NSString *key = nil, *keyOfOldestCacheNode = nil;
         for (key in cache) {
@@ -153,21 +177,21 @@ static NSString * const kCategoryNameSubstitutionVariable = @"NAME";
                 keyOfOldestCacheNode = key;
             }
         }
-        // retain the cache node for reuse
+        // Retain the cache node for reuse.
         cacheNode = cache[keyOfOldestCacheNode];
-        // remove from the cache
+        // Remove from the cache.
         if (keyOfOldestCacheNode != nil)
             [cache removeObjectForKey:keyOfOldestCacheNode];
     } else {
-        // create a new cache node
+        // Create a new cache node.
         cacheNode = [[CacheNode alloc] init];
     }
     cacheNode.objectID = category.objectID;
-    cacheNode.accessCounter = accessCounter++;
+    cacheNode.accessCounter = _accessCounter++;
     cache[name] = cacheNode;
 #endif
-    totalCacheMissCost += ([NSDate timeIntervalSinceReferenceDate] - before);
-    cacheMissCount++;
+    _totalCacheMissCost += ([NSDate timeIntervalSinceReferenceDate] - before);
+    _cacheMissCount++;
     return category;
 }
 

@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
@@ -8,7 +8,9 @@
 
 #import "AppDelegate.h"
 #import "SongsViewController.h"
+#import "iTunesRSSImporter.h"
 
+@import CoreData;
 
 // String used to identify the update object in the user defaults storage.
 static NSString * const kLastStoreUpdateKey = @"LastStoreUpdate";
@@ -19,7 +21,7 @@ static NSTimeInterval const kRefreshTimeInterval = 3600;
 // The number of songs to be retrieved from the RSS feed.
 static NSUInteger const kImportSize = 300;
 
-@interface AppDelegate()
+@interface AppDelegate() <iTunesRSSImporterDelegate>
 
 @property (nonatomic, strong) SongsViewController *songsViewController;
 
@@ -63,8 +65,7 @@ static NSUInteger const kImportSize = 300;
         self.importer.delegate = self;
         // pass the coordinator so the importer can create its own managed object context
         self.importer.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        //self.importer.iTunesURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://ax.phobos.apple.com.edgesuite.net/WebObjects/MZStore.woa/wpa/MRSS/newreleases/limit=%ld/rss.xml", (unsigned long)kImportSize]];
-        self.importer.iTunesURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://ax.phobos.apple.com/WebObjects/MZStore.woa/wpa/MRSS/newreleases/limit=%ld/rss.xml", (unsigned long)kImportSize]];
+        self.importer.iTunesURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://ax.phobos.apple.com.edgesuite.net/WebObjects/MZStore.woa/wpa/MRSS/newreleases/limit=%ld/rss.xml", (unsigned long)kImportSize]];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         
         // add the importer to an operation queue for background processing (works on a separate thread)
@@ -111,8 +112,8 @@ static NSUInteger const kImportSize = 300;
 - (NSManagedObjectContext *)managedObjectContext {
     
     if (_managedObjectContext == nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] init];
-        (self.managedObjectContext).persistentStoreCoordinator = self.persistentStoreCoordinator;
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
     }
     return _managedObjectContext;
 }
@@ -128,7 +129,7 @@ static NSUInteger const kImportSize = 300;
 }
 
 
-#pragma mark - <iTunesRSSImporterDelegate> Implementation
+#pragma mark - iTunesRSSImporterDelegate
 
 // This method will be called on a secondary thread. Forward to the main thread for safe handling of UIKit objects.
 - (void)importerDidSave:(NSNotification *)saveNotification {

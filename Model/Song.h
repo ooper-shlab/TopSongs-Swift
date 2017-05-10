@@ -1,12 +1,13 @@
 /*
- Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ Copyright (C) 2017 Apple Inc. All Rights Reserved.
  See LICENSE.txt for this sample’s licensing information
  
  Abstract:
  Managed object subclass for Song entity.
  */
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+@import CoreData;
 
 @class Category;
 
