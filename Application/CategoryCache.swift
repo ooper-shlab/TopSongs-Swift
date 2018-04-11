@@ -79,7 +79,7 @@ class CategoryCache: NSObject {
                 NotificationCenter.default.removeObserver(self, name: NSNotification.Name.NSManagedObjectContextDidSave, object: _managedObjectContext!)
             }
             _managedObjectContext = aContext
-            NotificationCenter.default.addObserver(self, selector: #selector(CategoryCache.managedObjectContextDidSave(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: _managedObjectContext)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.managedObjectContextDidSave(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: _managedObjectContext)
         }
     }
     

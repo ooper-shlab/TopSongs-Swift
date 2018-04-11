@@ -35,7 +35,7 @@ class SongDetailsController: UITableViewController {
         super.viewDidLoad()
         
         NotificationCenter.default.addObserver(self,
-            selector: #selector(SongDetailsController.localeChanged(_:)),
+            selector: #selector(self.localeChanged(_:)),
             name: NSLocale.currentLocaleDidChangeNotification,
             object: nil)
     }
@@ -83,7 +83,7 @@ class SongDetailsController: UITableViewController {
     
     //MARK: - Locale changes
     
-    func localeChanged(_ notif: Notification) {
+    @objc func localeChanged(_ notif: Notification) {
         // The user changed the locale (region format) in Settings, so we are notified here to
         // update the date format in the table view cells.
         //
