@@ -63,6 +63,8 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
     fileprivate var storingCharacters: Bool = false
     private var characterBuffer: Data = Data()
     
+    fileprivate var lastCategory: String? = nil
+    
     // Overall state of the importer, used to exit the run loop.
     private var done: Bool = false
     
@@ -98,11 +100,17 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
         }
         self.done = false
         dateFormatter = DateFormatter()
+        #if USE_OLD_RSS
         self.dateFormatter.dateStyle = .long
         self.dateFormatter.timeStyle = .none
         // necessary because iTunes RSS feed is not localized, so if the device region has been set to other than US
         // the date formatter must be set to US locale in order to parse the dates
         self.dateFormatter.locale = Locale(identifier: "US")
+        #else
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        #endif
         characterBuffer = Data()
         
         // create the session with the request and start loading the data
@@ -121,7 +129,7 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
             //
             context = xmlCreatePushParserCtxt(&simpleSAXHandlerStruct, Unmanaged.passUnretained(self).toOpaque(), nil, 0, nil)
             repeat {
-                RunLoop.current.run(mode: .defaultRunLoopMode, before: .distantFuture)
+                RunLoop.current.run(mode: .default, before: .distantFuture)
             } while !self.done
             
             // Display the total time spent finding a specific object for a relationship
@@ -150,6 +158,7 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
                 self.delegate?.importerDidFinishParsingData?(self)
             }
         }
+        
     }
     
     lazy var insertionContext: NSManagedObjectContext = {
@@ -208,7 +217,7 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
         
         // Process the downloaded chunk of data.
         data.withUnsafeBytes {bytes in
-            _ = xmlParseChunk(self.context, bytes, Int32(data.count), 0)
+            _ = xmlParseChunk(self.context, bytes.bindMemory(to: Int8.self).baseAddress, Int32(data.count), 0)
         }
     }
     
@@ -218,6 +227,7 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         if let error = error {
+            print(error)
             
             if #available(iOS 9.0, *) {
                 if (error as NSError).code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
@@ -285,6 +295,7 @@ class iTunesRSSImporter: Operation, URLSessionDataDelegate {
 
 // The following constants are the XML element names and their string lengths for parsing comparison.
 // The lengths include the null terminator, to ensure exact matches.
+#if USE_OLD_RSS
 private let kName_Item = "item"
 private let kLength_Item = kName_Item.utf8.count + 1
 private let kName_Title = "title"
@@ -299,6 +310,17 @@ private let kName_Album = "album"
 private let kLength_Album = kName_Album.utf8.count + 1
 private let kName_ReleaseDate = "releasedate"
 private let kLength_ReleaseDate = kName_ReleaseDate.utf8.count + 1
+#else
+//Based on the current (2019-04-20) atom
+// https://rss.itunes.apple.com/
+private let kName_Item = "entry"
+private let kName_Title = "im:name"
+private let kName_Category = "category"
+private let kName_Artist = "im:artist"
+private let kName_Album = "*unavailable*"
+private let kName_ReleaseDate = "im:releaseDate"
+#endif
+
 
 /*
 This callback is invoked when the importer finds the beginning of a node in the XML. For this application,
@@ -313,6 +335,7 @@ private let startElementSAX: startElementNsSAX2Func = {parsingContext, localname
     let importer = Unmanaged<iTunesRSSImporter>.fromOpaque(parsingContext!).takeUnretainedValue()
     // The second parameter to strncmp is the name of the element, which we known from the XML schema of the feed.
     // The third parameter to strncmp is the number of characters in the element name, plus 1 for the null terminator.
+    #if USE_OLD_RSS
     let pLocalname = UnsafeRawPointer(localname!).assumingMemoryBound(to: CChar.self)
     let pPrefix = prefix.map{UnsafeRawPointer($0).assumingMemoryBound(to: CChar.self)}
     if prefix == nil && strncmp(pLocalname, kName_Item, kLength_Item) == 0 {
@@ -320,6 +343,91 @@ private let startElementSAX: startElementNsSAX2Func = {parsingContext, localname
     } else if importer.parsingASong && ( (prefix == nil && (strncmp(pLocalname, kName_Title, kLength_Title) == 0 || strncmp(pLocalname, kName_Category, kLength_Category) == 0)) || ((prefix != nil && strncmp(pPrefix, kName_Itms, kLength_Itms) == 0) && (strncmp(pLocalname, kName_Artist, kLength_Artist) == 0 || strncmp(pLocalname, kName_Album, kLength_Album) == 0 || strncmp(pLocalname, kName_ReleaseDate, kLength_ReleaseDate) == 0)))
     {
         importer.storingCharacters = true
+    }
+    #else
+    let sPrefix = prefix.map{String(cString: $0) + ":"} ?? ""
+    let tagName = sPrefix + String(cString: localname!)
+    switch tagName {
+    case kName_Item:
+        importer.parsingASong = true
+    case kName_Title,
+         kName_Artist,
+         kName_Album,
+         kName_ReleaseDate:
+        importer.storingCharacters = true
+    case kName_Category:
+        if let attributes = attributes {
+            let attrs = parseAttributes(attributes, count: Int(nb_attributes))
+            if let label = attrs["label"], label != "Music" {
+                importer.lastCategory = label
+            }
+        }
+    default:
+        break
+    }
+    #endif
+}
+
+private func parseAttributes(_ attrs: UnsafeMutablePointer<UnsafePointer<xmlChar>?>, count: Int) -> [String: String] {
+    var result: [String: String] = [:]
+    for i in 0..<count {
+        let pLocalname = attrs[i*5+0]
+        let pPrefix = attrs[i*5+1]
+        let attrName: String
+        if pPrefix != nil {
+            attrName = String(cString: pPrefix!) + ":" + String(cString: pLocalname!)
+        } else {
+            attrName = String(cString: pLocalname!)
+        }
+        let pValueBegin = attrs[i*5+3]
+        let pValueEnd = attrs[i*5+4]
+        let valueCount = pValueBegin!.distance(to: pValueEnd!)
+        let valueBytes = UnsafeBufferPointer<UInt8>(start: pValueBegin, count: valueCount)
+        let value = String(bytes: valueBytes, encoding: .utf8)!
+        result[attrName] = unescapeXmlEntities(value)
+    }
+    return result
+}
+
+class ReplacingRegularExpression: NSRegularExpression {
+    var replace: ((NSTextCheckingResult, String)->String)?
+    
+    override func replacementString(for result: NSTextCheckingResult, in string: String, offset: Int, template templ: String) -> String {
+        return replace?(result, string)
+            ?? super.replacementString(for: result, in: string, offset: offset, template: templ)
+    }
+    
+    func stringByReplacingMatches(in string: String, options: NSRegularExpression.MatchingOptions = [], range: NSRange? = nil, replace: @escaping (NSTextCheckingResult, String)->String) -> String {
+        let range = range ?? NSRange(0..<string.utf16.count)
+        self.replace = replace
+        return super.stringByReplacingMatches(in: string, options: options, range: range, withTemplate: "")
+    }
+}
+private let xmlEntityPattern = #"""
+(&gt;)|(&lt;)|(&amp;)|(&quot;)|(&apos;)|&#([0-9]+);|&#[xX]([0-9a-fA-F]+);
+"""#
+private let xmlEntityRegex = try! ReplacingRegularExpression(pattern: xmlEntityPattern)
+func unescapeXmlEntities(_ str: String) -> String {
+    return xmlEntityRegex.stringByReplacingMatches(in: str) {result, string in
+        if let _ = Range(result.range(at: 1), in: string) {
+            return ">"
+        } else if let _ = Range(result.range(at: 2), in: string) {
+            return "<"
+        } else if let _ = Range(result.range(at: 3), in: string) {
+            return "&"
+        } else if let _ = Range(result.range(at: 4), in: string) {
+            return "\""
+        } else if let _ = Range(result.range(at: 5), in: string) {
+            return "\'"
+        } else if let range = Range(result.range(at: 6), in: string) {
+            let codePoint = UInt32(string[range]) ?? 0xFFFD
+            return String(Unicode.Scalar(codePoint) ?? "\u{FFFD}")
+        } else if let range = Range(result.range(at: 7), in: string) {
+            let codePoint = UInt32(string[range], radix: 16) ?? 0xFFFD
+            return String(Unicode.Scalar(codePoint) ?? "\u{FFFD}")
+        } else {
+            return String(string[Range(result.range, in: string)!])
+        }
     }
 }
 
@@ -334,6 +442,7 @@ private let endElementSAX: endElementNsSAX2Func = {parsingContext, localname, pr
     
     let importer = Unmanaged<iTunesRSSImporter>.fromOpaque(parsingContext!).takeUnretainedValue()
     if !importer.parsingASong {return}
+    #if USE_OLD_RSS
     let pLocalname = UnsafeRawPointer(localname!).assumingMemoryBound(to: CChar.self)
     let pPrefix = prefix.map{UnsafeRawPointer($0).assumingMemoryBound(to: CChar.self)}
     if prefix == nil {
@@ -358,6 +467,42 @@ private let endElementSAX: endElementNsSAX2Func = {parsingContext, localname, pr
             importer.currentSong.releaseDate = importer.dateFormatter.date(from: dateString)
         }
     }
+    #else
+    let sPrefix = prefix.map{String(cString: $0) + ":"} ?? ""
+    let tagName = sPrefix + String(cString: localname!)
+    switch tagName {
+    case kName_Item:
+        #if !USE_OLD_RSS
+        if let categoryString = importer.lastCategory {
+            let before = Date.timeIntervalSinceReferenceDate
+            let category = importer.theCache.categoryWithName(categoryString)
+            let delta = Date.timeIntervalSinceReferenceDate - before
+            iTunesRSSImporter.lookuptime += delta
+            importer.currentSong.category = category
+        }
+        #endif
+        importer.finishedCurrentSong()
+    case kName_Title:
+        importer.currentSong.title = importer.currentString
+    #if USE_OLD_RSS
+    case kName_Category:
+        let before = Date.timeIntervalSinceReferenceDate
+        let category = importer.theCache.categoryWithName(importer.currentString)
+        let delta = Date.timeIntervalSinceReferenceDate - before
+        iTunesRSSImporter.lookuptime += delta
+        importer.currentSong.category = category
+    #endif
+    case kName_Artist:
+        importer.currentSong.artist = importer.currentString
+    case kName_Album:
+        importer.currentSong.album = importer.currentString
+    case kName_ReleaseDate:
+        let dateString = importer.currentString
+        importer.currentSong.releaseDate = importer.dateFormatter.date(from: dateString)
+    default:
+        break
+    }
+    #endif
     importer.storingCharacters = false
 }
 
@@ -382,7 +527,7 @@ typealias errorSAXFuncDummy = @convention(c) (_ parsingContext: UnsafeMutableRaw
 private let errorEncounteredSAX: errorSAXFuncDummy = {parsingContext, errorMessage in
     
     // Handle errors as appropriate for your application.
-    fatalError("Unhandled error encountered during SAX parse.")
+    fatalError("Unhandled error encountered during SAX parse.\(String(cString: errorMessage))")
 }
 
 // The handler struct has positions for a large number of callback functions. If NULL is supplied at a given position,

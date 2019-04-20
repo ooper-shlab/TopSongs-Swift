@@ -49,7 +49,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, iTunesRSSImporterDelegate {
     //
     var window: UIWindow?
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // check the last update, stored in NSUserDefaults
         let lastUpdate = UserDefaults.standard.object(forKey: kLastStoreUpdateKey) as? Date
@@ -70,7 +70,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, iTunesRSSImporterDelegate {
             self.importer.delegate = self
             // pass the coordinator so the importer can create its own managed object context
             self.importer.persistentStoreCoordinator = self.persistentStoreCoordinator
-            self.importer.iTunesURL = URL(string: "http://ax.phobos.apple.com.edgesuite.net/WebObjects/MZStore.woa/wpa/MRSS/newreleases/limit=\(kImportSize)/rss.xml")
+            self.importer.iTunesURL = URL(string:
+                //#USE_OLD_RSS, unavailable now...
+            //"http://ax.phobos.apple.com.edgesuite.net/WebObjects/MZStore.woa/wpa/MRSS/newreleases/limit=\(kImportSize)/rss.xml"
+                 "https://rss.itunes.apple.com/api/v1/us/apple-music/top-songs/all/10/explicit.atom"
+            )
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
             
             // add the importer to an operation queue for background processing (works on a separate thread)

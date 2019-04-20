@@ -13,4 +13,4 @@ You should not contact to Apple or SHLab(jp) about any faults caused by my trans
 
 ## Build Requirements
 
-iOS SDK 11 or later
+Xcode 10.2, iOS SDK 12.2 or later

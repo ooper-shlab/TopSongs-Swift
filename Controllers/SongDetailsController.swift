@@ -28,6 +28,9 @@ class SongDetailsController: UITableViewController {
         let _dateFormatter = DateFormatter()
         _dateFormatter.dateStyle = .medium
         _dateFormatter.timeStyle = .none
+        #if !USE_OLD_RSS
+        _dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        #endif
         return _dateFormatter
     }()
     
@@ -60,7 +63,7 @@ class SongDetailsController: UITableViewController {
         switch indexPath.row {
         case 0:
             cell.textLabel!.text = NSLocalizedString("album", comment: "album label")
-            cell.detailTextLabel!.text = self.song?.album
+            cell.detailTextLabel!.text = self.song?.album ?? "Unknown"
         case 1:
             cell.textLabel!.text = NSLocalizedString("artist", comment: "artist label")
             cell.detailTextLabel!.text = self.song?.artist
@@ -69,7 +72,9 @@ class SongDetailsController: UITableViewController {
             cell.detailTextLabel!.text = self.song?.category?.name
         case 3:
             cell.textLabel!.text = NSLocalizedString("released", comment: "released label")
-            cell.detailTextLabel?.text = self.dateFormatter.string(from: (self.song?.releaseDate)! as Date)
+            cell.detailTextLabel?.text = self.song?.releaseDate.map{
+                self.dateFormatter.string(from: $0)
+            } ?? "Unspecified"
         default:
             break
         }
